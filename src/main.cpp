@@ -649,7 +649,7 @@ void competition_initialize() {
 
     //R1 Toggle
     else if (R1){
-      
+        intakeLift.set_value(true);
         firstStageMotor.move(127);
 		    secondStageMotor.move(-127);
       } 
