@@ -618,6 +618,7 @@ void competition_initialize() {
   bool R1 = false;
   bool X = false;
   bool R2 = false;
+  bool L1 = false;
   while (true) {
         // get joystick positions
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -627,6 +628,9 @@ void competition_initialize() {
     //toggling variables
 	  if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
 		R1 = !R1;
+	  }
+    if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+		L1 = !L1;
 	  }
     
     //INTAKE BUTTONS
@@ -653,15 +657,22 @@ void competition_initialize() {
         firstStageMotor.move(127);
 		    secondStageMotor.move(-127);
       } 
-    else {
+    else if (!R1){
       intakeLift.set_value(false);
       firstStageMotor.move(0);
       secondStageMotor.move(0);
     }
 
+    //L1 Toggle
+    else if (L1){
+      scraper.set_value(true);
+    }
+    else if (!L1){
+      scraper.set_value(false);
+    }
     //PNEUMATICS
     //X Hold
-    //Bassicly, you press X the first time, it sets redirect to false, then the program goes on and delays 10 milliseconds, then sets it to true
+    //Basically, you press X the first time, it sets redirect to false, then the program goes on and delays 10 milliseconds, then sets it to true
 
     if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X) && !X){
       pros::Task screenTask([&]() {
@@ -709,7 +720,6 @@ void PIDTASK(){
 }
 
 void PID(){
-
     chassis.setPose(0,0,0);
     //chassis.moveToPoint(0,24,2000);
     chassis.turnToHeading(90,300);
@@ -724,7 +734,6 @@ void opcontrol() {
 
     //driverControl();
    
-
     //This only runs if driver control and stuff isn't running
 	
     if(PIDBOOL){
@@ -747,6 +756,3 @@ void opcontrol() {
     }
   
 }
-
-      
-   //pneumatics, the reason for this is cause like if i do it in the other buttons then bad bad bad
