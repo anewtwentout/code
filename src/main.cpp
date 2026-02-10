@@ -619,6 +619,7 @@ void competition_initialize() {
   bool X = false;
   bool R2 = false;
   bool L1 = false;
+  bool L2 = false;
   while (true) {
         // get joystick positions
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -646,23 +647,27 @@ void competition_initialize() {
     //L2 Hold
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
       R1 = false;
+      L2 = true;
       intakeLift.set_value(true);
       firstStageMotor.move(127*-5/12);
       secondStageMotor.move(127*5/12);
+
     }
 
     //R1 Toggle
     else if (R1){
-        intakeLift.set_value(true);
         firstStageMotor.move(127);
 		    secondStageMotor.move(-127);
       } 
     else if (!R1){
-      intakeLift.set_value(false);
       firstStageMotor.move(0);
       secondStageMotor.move(0);
     }
-
+    //Things to do when you release a button
+    if (L2 && !controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      intakeLift.set_value(false);
+      L2 = false;
+    }
     
     //PNEUMATICS
     //L1 Toggle
