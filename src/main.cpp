@@ -663,6 +663,8 @@ void competition_initialize() {
       secondStageMotor.move(0);
     }
 
+    
+    //PNEUMATICS
     //L1 Toggle
     if (L1){
         scraper.set_value(true);
@@ -670,7 +672,6 @@ void competition_initialize() {
     else if (!L1){
         scraper.set_value(false);
     }
-    //PNEUMATICS
     //X Hold
     //Basically, you press X the first time, it sets redirect to false, then the program goes on and delays 10 milliseconds, then sets it to true
 
