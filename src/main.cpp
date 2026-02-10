@@ -664,11 +664,11 @@ void competition_initialize() {
     }
 
     //L1 Toggle
-    else if (L1){
-      scraper.set_value(true);
+    if (L1){
+        scraper.set_value(true);
     }
     else if (!L1){
-      scraper.set_value(false);
+        scraper.set_value(false);
     }
     //PNEUMATICS
     //X Hold
