@@ -658,6 +658,7 @@ void competition_initialize() {
     else if (R1){
         firstStageMotor.move(127);
 		    secondStageMotor.move(-127);
+        redirect.set_value(true);
       } 
     else if (!R1){
       firstStageMotor.move(0);
