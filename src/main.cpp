@@ -9,7 +9,7 @@
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 //pnematics
-pros::adi::DigitalOut scraper ('X', false);
+pros::adi::DigitalOut scraper ('D', false);
 pros::adi::DigitalOut intakeLift ('A', false);
 pros::adi::DigitalOut wings ('B', false);
 pros::adi::DigitalOut redirect ('C', true);
