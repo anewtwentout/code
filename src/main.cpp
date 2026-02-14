@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "lemlib/chassis/trackingWheel.hpp"
 #include "pros/misc.h"
 #include "pros/motors.h"
 #include "pros/motors.hpp"
@@ -19,8 +20,11 @@ pros::MotorGroup rightMotors({14, 15, 16}, pros::MotorGearset::blue); // right m
 pros::Motor firstStageMotor(1, pros::MotorGearset::blue);
 pros::Motor secondStageMotor(2, pros::MotorGearset::blue);
 
-// Inertial Sensor on port 10
-pros::Imu imu(10);
+// Inertial Sensor on port 17
+pros::Imu imu(17);
+//Odom
+pros::Rotation vertical_encoder(-17);
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, -0.4);
 /*
 pros::Distance distance(1);
 chassis.setPos(chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
@@ -71,7 +75,7 @@ lemlib::ControllerSettings angularController(2, // proportional gain (kP)
 );
 
 // sensors for odometry
-lemlib::OdomSensors sensors(nullptr, // vertical tracking wheel
+lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel
                             nullptr, // vertical tracking wheel 2, set to nullptr as we don't have a second one
                             nullptr, // horizontal tracking wheel
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
@@ -139,8 +143,8 @@ void disabled() {}
  */
 
 bool autonomousRunning = false;
-int autonomousValue = 2; // 0 = Skills, 1 = R7+Wings, 2 = L4+3, 3 = R7+Blocks, 4 = L7
-int amountOfAutonomousCodes = 6;
+int autonomousValue = 0; // 0 = Skills, 1 = R7+Wings, 2 = L4+3, 3 = R7+Blocks, 4 = L7
+int amountOfAutonomousCodes = 1;
 void competition_initialize() {
   pros::Task autonomousTask([&]() {
   while(true)
@@ -154,23 +158,9 @@ void competition_initialize() {
   
   switch(autonomousValue){
     case 0:
-      pros::lcd::print(0, "Autonomous: %s", "Skill");
-      break;
-    case 1:
-      pros::lcd::print(0, "Autonomous: %s", "Right");
-      break;
-    case 2:
-      pros::lcd::print(0, "Autonomous: %s", "Left4+3");
-      break;
-  	case 3:
-	    pros::lcd::print(0, "Autonomous: %s", "RightBlocks");
-      break;
-      case 4:
-      pros::lcd::print(0, "Autonomous: %s", "Lef7");
-      break;
-      case 5:
       pros::lcd::print(0, "Autonomous: %s", "SAWP");
       break;
+    
   }
   pros::delay(50);
   }
@@ -178,7 +168,51 @@ void competition_initialize() {
 
 }
 
-
+void SAWP(){
+  /*chassis.moveTo(0, 0, 5000);*
+chassis.moveTo(0, 32.01, 5000);*
+chassis.moveTo(17.969, 32.01, 5000);*
+chassis.moveTo(-20.871, 33.01, 5000);*
+chassis.moveTo(-23.644, 9.01, 5000);*
+chassis.moveTo(-23.644, -38.99, 5000);*
+chassis.moveTo(-9.277, -62.99, 5000);*
+chassis.moveTo(-23.905, -62.99, 5000);*
+chassis.moveTo(13.032, -61.99, 5000);*
+chassis.moveTo(-23.644, -38.99, 5000);*
+chassis.moveTo(-38.644, -23.99, 5000);
+*/
+  //setup
+  chassis.setPose(0,0,0); //X and Y might be changed btw,
+  //Right Inbetween
+  chassis.moveToPoint(0,32.01,1000,{},false);
+  //Right Match Loader
+  chassis.turnToPoint(17.969,32.01,500,{},false);
+  chassis.moveToPoint(17.969,32.01,1000,{},false);
+  //Right Long Goal
+  chassis.turnToPoint(-20.871,33.01,250,{.forwards = false}, false);
+  chassis.moveToPoint(-20.871,33.01, 800, {.forwards = false, .minSpeed = 60}, false);
+  //First Cluster
+  chassis.turnToPoint(-23.644,9.01,350, {}, false);
+  chassis.moveToPoint(-23.644, 9.01, 1000, {.minSpeed = 60, .earlyExitRange = 1}, false );
+  //Second Cluster
+  chassis.turnToPoint(-23.644, -38.99, 150, {}, false);
+  chassis.moveToPoint(-23.644, -38.99, 1250, {}, false);
+  //Left Inbetween
+  chassis.turnToPoint(-9.277,-62.99, 350, {}, false);
+  chassis.moveToPoint(-9.277,-62.99, 1250, {}, false);
+  //Left Long Goal
+  chassis.turnToPoint(-23.905, -62.99, 500, {.forwards = false}, false);
+  chassis.moveToPoint(-23.905, -62.99, 500, {.forwards = false, .minSpeed = 60}, false);
+  //Left MatchLoader
+  chassis.turnToPoint(13.032, -61.99, 250, {}, false);
+  chassis.moveToPoint(13.032,-61.99, 800, {}, false);
+  //Before Mid Goal
+  chassis.turnToPoint(-23.644,-38.99, 450, {.forwards=false}, false);
+  chassis.moveToPoint(-23.644,-38.99,1000, {.forwards = false}, false);
+  //Mid Goal
+  chassis.turnToPoint(-38.644, -23.99, 500, {.forwards = false}, false);
+  chassis.moveToPoint(-38.644, -23.99, 800, {.forwards = false}, false);
+}
 // // get a path used for pure pursuit
 // // this needs to be put outside a function
 // ASSET(part1_txt);
@@ -584,11 +618,11 @@ void competition_initialize() {
   
 // }
  void autonomous() {
-//   autonomousRunning = true;
-//     switch(autonomousValue){
-//     case 0:
-//       skill();
-//       break;
+   autonomousRunning = true;
+     switch(autonomousValue){
+     case 0:
+       SAWP();
+       break;
 //     case 1:
 //       right();
 //       break;
@@ -606,7 +640,7 @@ void competition_initialize() {
 //     break;
 //     }
  }
-
+ }
 /**
  * Runs in driver control
  */
