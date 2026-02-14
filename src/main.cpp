@@ -23,7 +23,7 @@ pros::Motor secondStageMotor(2, pros::MotorGearset::blue);
 // Inertial Sensor on port 17
 pros::Imu imu(17);
 //Odom
-pros::Rotation vertical_encoder(-17);
+pros::Rotation vertical_encoder(-18);
 lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, -0.4);
 /*
 pros::Distance distance(1);
@@ -50,9 +50,9 @@ lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
 
 // lateral motion controller
 
-lemlib::ControllerSettings linearController(8, // proportional gain (kP)
+lemlib::ControllerSettings linearController( 7, // proportional gain (kP)
                                             0, // integral gain (kI)
-                                           54.1, // derivative gain (kD)
+                                           40, // derivative gain (kD)
                                             0, // anti windup
                                             0, // small error range, in inches
                                             0, // small error range timeout, in milliseconds
@@ -63,9 +63,9 @@ lemlib::ControllerSettings linearController(8, // proportional gain (kP)
 
 // angular motion controller
 
-lemlib::ControllerSettings angularController(2, // proportional gain (kP)
+lemlib::ControllerSettings angularController(1.9, // proportional gain (kP)
                                              0,// integral gain (kI)
-                                             12.5, // derivative gain (kD)
+                                            12, // derivative gain (kD)
                                              0, // anti windup
                                              0, // small error range, in degrees
                                              0, // small error range timeout, in milliseconds
@@ -125,6 +125,7 @@ void initialize() {
             pros::lcd::print(2, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(3, "Theta: %f", chassis.getPose().theta); // heading
             pros::lcd::print(4, "Version: %f", codeVersion); // heading
+            
             // log position telemetry
             lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             // delay to save resources
@@ -183,35 +184,60 @@ chassis.moveTo(-38.644, -23.99, 5000);
 */
   //setup
   chassis.setPose(0,0,0); //X and Y might be changed btw,
+  wings.set_value(true);
+  redirect.set_value(true);
+  firstStageMotor.move(127);
+  secondStageMotor.move(-127);
   //Right Inbetween
-  chassis.moveToPoint(0,32.01,1000,{},false);
+  chassis.moveToPoint(0,35.01,875,{},false);
   //Right Match Loader
-  chassis.turnToPoint(17.969,32.01,500,{},false);
-  chassis.moveToPoint(17.969,32.01,1000,{},false);
+  scraper.set_value(true);
+  chassis.turnToPoint(17.969,35.01,400,{},false);
+  chassis.moveToPoint(17.969,35.01,605,{},false);
   //Right Long Goal
-  chassis.turnToPoint(-20.871,33.01,250,{.forwards = false}, false);
-  chassis.moveToPoint(-20.871,33.01, 800, {.forwards = false, .minSpeed = 60}, false);
+  chassis.turnToPoint(-20.871,35.51,250,{.forwards = false}, false);
+  chassis.moveToPoint(-20.871,35.51, 800, {.forwards = false, .minSpeed = 60}, true);
+  pros::delay(700);
+  wings.set_value(false);
+  scraper.set_value(false);
+  pros::delay(1100);
+  wings.set_value(true);
   //First Cluster
-  chassis.turnToPoint(-23.644,9.01,350, {}, false);
-  chassis.moveToPoint(-23.644, 9.01, 1000, {.minSpeed = 60, .earlyExitRange = 1}, false );
+  chassis.turnToPoint(-23.644,9.01,1000, {}, false);
+  chassis.moveToPoint(-23.644, 9.01, 1000, {}, true);
+  pros::delay(300);
+  scraper.set_value(true);
+  pros::delay(700);
   //Second Cluster
-  chassis.turnToPoint(-23.644, -38.99, 150, {}, false);
-  chassis.moveToPoint(-23.644, -38.99, 1250, {}, false);
+  chassis.turnToPoint(-21.644, -38.99, 150, {}, false);
+  chassis.moveToPoint(-21.644, -38.99, 1200,  {}, true);
+  scraper.set_value(false);
+  pros::delay(600);
+  scraper.set_value(true);
+  pros::delay(600);
   //Left Inbetween
-  chassis.turnToPoint(-9.277,-62.99, 350, {}, false);
-  chassis.moveToPoint(-9.277,-62.99, 1250, {}, false);
+  chassis.turnToPoint(0,-62.99, 350, {}, false);
+  chassis.moveToPoint(0,-62.99, 1350, {}, false);
   //Left Long Goal
   chassis.turnToPoint(-23.905, -62.99, 500, {.forwards = false}, false);
-  chassis.moveToPoint(-23.905, -62.99, 500, {.forwards = false, .minSpeed = 60}, false);
+  chassis.moveToPoint(-23.905, -62.99, 750, {.forwards = false}, false);
+  wings.set_value(false);
+  pros::delay(1000);
+  wings.set_value(true);
   //Left MatchLoader
-  chassis.turnToPoint(13.032, -61.99, 250, {}, false);
-  chassis.moveToPoint(13.032,-61.99, 800, {}, false);
+  chassis.turnToPoint(18.032, -61.99, 250, {}, false);
+  scraper.set_value(true);
+  chassis.moveToPoint(18.032,-61.99, 1400, {.maxSpeed=90}, false);
   //Before Mid Goal
   chassis.turnToPoint(-23.644,-38.99, 450, {.forwards=false}, false);
   chassis.moveToPoint(-23.644,-38.99,1000, {.forwards = false}, false);
+  scraper.set_value(false);
   //Mid Goal
   chassis.turnToPoint(-38.644, -23.99, 500, {.forwards = false}, false);
   chassis.moveToPoint(-38.644, -23.99, 800, {.forwards = false}, false);
+  redirect.set_value(false);
+  firstStageMotor.move(127);
+  secondStageMotor.move(-42);
 }
 // // get a path used for pure pursuit
 // // this needs to be put outside a function
@@ -538,7 +564,7 @@ chassis.moveTo(-38.644, -23.99, 5000);
 //   chassis.moveToPoint(12.8,18, 1500, {.forwards = false, .maxSpeed = 60}, false);
 // }
 // void SAWP()
-// {
+// { 
 //   //put sawp here
 // }
 // void skill2(){ //
@@ -646,7 +672,7 @@ chassis.moveTo(-38.644, -23.99, 5000);
  */
  void driverControl()
  {
-
+  chassis.setPose(0,0,0);
   float delayTime = 10;
   //Variables for presses
   bool R1 = false;
@@ -762,8 +788,8 @@ void PIDTASK(){
 
 void PID(){
     chassis.setPose(0,0,0);
-    //chassis.moveToPoint(0,24,2000);
-    chassis.turnToHeading(90,300);
+    //chassis.moveToPoint(0,24,1000);
+    chassis.turnToHeading(90,1000);
 }
 bool testingAutonomous = false;
 bool PIDBOOL = false;
