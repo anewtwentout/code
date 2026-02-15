@@ -170,18 +170,6 @@ void competition_initialize() {
 }
 
 void SAWP(){
-  /*chassis.moveTo(0, 0, 5000);*
-chassis.moveTo(0, 32.01, 5000);*
-chassis.moveTo(17.969, 32.01, 5000);*
-chassis.moveTo(-20.871, 33.01, 5000);*
-chassis.moveTo(-23.644, 9.01, 5000);*
-chassis.moveTo(-23.644, -38.99, 5000);*
-chassis.moveTo(-9.277, -62.99, 5000);*
-chassis.moveTo(-23.905, -62.99, 5000);*
-chassis.moveTo(13.032, -61.99, 5000);*
-chassis.moveTo(-23.644, -38.99, 5000);*
-chassis.moveTo(-38.644, -23.99, 5000);
-*/
   //setup
   chassis.setPose(0,0,0); //X and Y might be changed btw,
   wings.set_value(true);
@@ -189,56 +177,66 @@ chassis.moveTo(-38.644, -23.99, 5000);
   firstStageMotor.move(127);
   secondStageMotor.move(-127);
   //Right Inbetween
-  chassis.moveToPoint(0,35.01,875,{},false);
+  chassis.moveToPoint(0,35.51,1025,{},false);
   //Right Match Loader
   scraper.set_value(true);
-  chassis.turnToPoint(17.969,35.01,400,{},false);
-  chassis.moveToPoint(17.969,35.01,605,{},false);
+  chassis.turnToPoint(17.969,35.51,570,{},false);
+  chassis.moveToPoint(19.969,35.51,685,{.maxSpeed=40},false);
   //Right Long Goal
-  chassis.turnToPoint(-20.871,35.51,250,{.forwards = false}, false);
-  chassis.moveToPoint(-20.871,35.51, 800, {.forwards = false, .minSpeed = 60}, true);
+  chassis.turnToPoint(-20.871,36.01,250,{.forwards = false}, false);
+  chassis.moveToPoint(-20.871,36.01, 1000, {.forwards = false, .minSpeed = 60}, true);
   pros::delay(700);
   wings.set_value(false);
   scraper.set_value(false);
-  pros::delay(1100);
-  wings.set_value(true);
+  pros::delay(850);
   //First Cluster
-  chassis.turnToPoint(-23.644,9.01,1000, {}, false);
-  chassis.moveToPoint(-23.644, 9.01, 1000, {}, true);
+  chassis.turnToPoint(-23.644,9.01,1000, {.minSpeed=40}, false);
+  wings.set_value(true);
+  chassis.moveToPoint(-23.644, 9.01, 500, {.maxSpeed=40}, true);
+  pros::delay(300);
+  //scraper.set_value(true);
+  //pros::delay(700);}
+//   //Second Cluster
+  chassis.turnToPoint(-21.644, -38.99, 150, {}, false);
+  chassis.moveToPoint(-21.644, -26.99, 600,  {.minSpeed=50}, true);
+  chassis.moveToPoint(-21.644, -38.99, 150, {.maxSpeed=40}, false);
+  pros::delay(280);
+ // scraper.set_value(true);
+ // scraper.set_value(true);
+  pros::delay(0520);
+  //Left Inbetween
+  chassis.turnToPoint(0,-63.25, 350, {}, false);
+  chassis.moveToPoint(0,-63.25, 950, {}, false);
+  //Left Long Goal
+  chassis.turnToPoint(-20.905, -63.25, 450, {.forwards = false}, false);
+  chassis.moveToPoint(-20.905, -63.25, 200, {.forwards = false}, true);
+  chassis.moveToPoint(-20.905, -63.25, 300, {.forwards = false,.maxSpeed=60}, true);
   pros::delay(300);
   scraper.set_value(true);
-  pros::delay(700);
-  //Second Cluster
-  chassis.turnToPoint(-21.644, -38.99, 150, {}, false);
-  chassis.moveToPoint(-21.644, -38.99, 1200,  {}, true);
-  scraper.set_value(false);
-  pros::delay(600);
-  scraper.set_value(true);
-  pros::delay(600);
-  //Left Inbetween
-  chassis.turnToPoint(0,-62.99, 350, {}, false);
-  chassis.moveToPoint(0,-62.99, 1350, {}, false);
-  //Left Long Goal
-  chassis.turnToPoint(-23.905, -62.99, 500, {.forwards = false}, false);
-  chassis.moveToPoint(-23.905, -62.99, 750, {.forwards = false}, false);
   wings.set_value(false);
-  pros::delay(1000);
-  wings.set_value(true);
+  pros::delay(1200);
   //Left MatchLoader
-  chassis.turnToPoint(18.032, -61.99, 250, {}, false);
-  scraper.set_value(true);
-  chassis.moveToPoint(18.032,-61.99, 1400, {.maxSpeed=90}, false);
+  chassis.turnToPoint(18.032, -62.99, 250, {}, false);
+  chassis.moveToPoint(18.032, -62.99, 400, {.minSpeed = 127, .earlyExitRange = 3}, false);
+  wings.set_value(true);
+  chassis.moveToPoint(18.032,-62.99, 950, {.maxSpeed = 45}, false);
   //Before Mid Goal
-  chassis.turnToPoint(-23.644,-38.99, 450, {.forwards=false}, false);
-  chassis.moveToPoint(-23.644,-38.99,1000, {.forwards = false}, false);
-  scraper.set_value(false);
+  // chassis.turnToPoint(-23.644,-38.99, 450, {.forwards=false}, false);
+  // chassis.moveToPoint(-23.644,-38.99,1000, {.forwards = false}, false);
+  // scraper.set_value(false);
+  // pros::delay(10000);
   //Mid Goal
-  chassis.turnToPoint(-38.644, -23.99, 500, {.forwards = false}, false);
-  chassis.moveToPoint(-38.644, -23.99, 800, {.forwards = false}, false);
+  //chassis.turnToPoint(-36.644, -23.99, 500, {.forwards = false}, false);
+ 
+  chassis.moveToPoint(6, -62.99,  300,{.forwards=false}, false);
+  chassis.turnToPoint(36.644, -23.99, 100, {}, false);
+  chassis.moveToPose(-36.644, -23.99, 135, 1680, {.forwards = false, .minSpeed = 50}, true);
+  pros::delay(1800);
   redirect.set_value(false);
   firstStageMotor.move(127);
-  secondStageMotor.move(-42);
+  secondStageMotor.move(-70);
 }
+// }
 // // get a path used for pure pursuit
 // // this needs to be put outside a function
 // ASSET(part1_txt);
@@ -681,7 +679,7 @@ chassis.moveTo(-38.644, -23.99, 5000);
   bool L1 = false;
   bool L2 = false;
   while (true) {
-        // get joystick positions
+    
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         chassis.arcade(leftY, rightX);
@@ -693,7 +691,6 @@ chassis.moveTo(-38.644, -23.99, 5000);
     if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
 		L1 = !L1;
 	  }
-    
     //INTAKE BUTTONS
 
     //A Button Hold
@@ -766,6 +763,7 @@ chassis.moveTo(-38.644, -23.99, 5000);
       wings.set_value(true);
     }
 
+    
     pros::delay(delayTime);
 
   
