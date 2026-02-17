@@ -14,7 +14,7 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 pros::adi::DigitalOut scraper ('D', false);
 pros::adi::DigitalOut intakeLift ('A', false);
 pros::adi::DigitalOut wings ('B', false);
-pros::adi::DigitalOut redirect ('C', true);
+pros::adi::DigitalOut redirect ('C', false);
 // motor groups
 pros::MotorGroup leftMotors({-11, -12, -13}, pros::MotorGearset::blue);
 pros::MotorGroup rightMotors({14, 15, 16}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
@@ -145,7 +145,7 @@ void disabled() {}
  */
 
 bool autonomousRunning = false;
-int autonomousValue = 1; // 0 = Skills, 1 = R7+Wings, 2 = L4+3, 3 = R7+Blocks, 4 = L7
+int autonomousValue =3; // 0 = SAWP, 1 = 4 block Control Rush, 2 = R4+3, 3= L3+4
 int amountOfAutonomousCodes = 2;
 void competition_initialize() {
   pros::Task autonomousTask([&]() {
@@ -174,7 +174,7 @@ void SAWP(){
   //setup
   chassis.setPose(0,0,0); //X and Y might be changed btw,
   wings.set_value(true);
-  redirect.set_value(true);
+  redirect.set_value(false);
   firstStageMotor.move(127);
   secondStageMotor.move(-127);
   //Right Inbetween
@@ -233,7 +233,7 @@ void SAWP(){
   chassis.turnToPoint(36.644, -23.99, 100, {}, false);
   chassis.moveToPose(-36.644, -23.99, 135, 1680, {.forwards = false, .minSpeed = 50}, true);
   pros::delay(1800);
-  redirect.set_value(false);
+  redirect.set_value(true);
   firstStageMotor.move(127);
   secondStageMotor.move(-70);
 }
@@ -249,7 +249,7 @@ void controlRush()
 //setup
   chassis.setPose(0,0,0); //X and Y might be changed btw,
   wings.set_value(true);
-  redirect.set_value(true);
+  redirect.set_value(false);
   firstStageMotor.move(127);
   secondStageMotor.move(-127);
   //Right Inbetween
@@ -276,9 +276,118 @@ void controlRush()
   leftMotors.brake();
   rightMotors.brake();
 }
-void fourPlusThree()
+void rightFourPlusThree()
 {
+// chassis.moveTo(0, 0, 5000);
+// chassis.moveTo(0, 32.01, 5000);
+// chassis.moveTo(17.969, 32.01, 5000);
+// chassis.moveTo(-20.871, 33.01, 5000);
+// chassis.moveTo(-23.644, 9.01, 5000);
+// chassis.moveTo(-36.612, -4.33, 5000);
 
+//setup
+  chassis.setPose(0,0,0); //X and Y might be changed btw,
+  wings.set_value(true);
+  redirect.set_value(false);
+  firstStageMotor.move(127);
+  secondStageMotor.move(-127);
+  //Right Inbetween
+  chassis.moveToPoint(0,35.51,1000,{},false);
+  //Right Match Loader
+  scraper.set_value(true);
+  chassis.turnToPoint(17.969,35.51,570,{},false);
+  chassis.moveToPoint(19.969,35.51,695,{.maxSpeed=40},false);
+  //Right Long Goal
+  chassis.turnToPoint(-20.871,36.01,250,{.forwards = false}, false);
+  chassis.moveToPoint(-20.871,36.01, 1000, {.forwards = false, .minSpeed = 60}, true);
+  pros::delay(650);
+  wings.set_value(false);
+  scraper.set_value(false);
+  pros::delay(800);
+  //Cluster
+  chassis.turnToPoint(-26.533,6.112,1000, {.minSpeed=40}, false);
+  wings.set_value(true);
+  secondStageMotor.move(0);
+  chassis.moveToPoint(-26.533, 6.112, 500, {.maxSpeed=40}, false);
+  //scraper.set_value(true);
+  //pros::delay(300);
+  //MidGoal
+  chassis.turnToPoint(-37+2, -2.5+4, 500, {}, false);
+  scraper.set_value(false);
+  chassis.moveToPoint(-37+2, -2.5+4, 1200, {}, false);
+  intakeLift.set_value(true);
+  firstStageMotor.move(-80);
+  secondStageMotor.move(80);
+  scraper.set_value(false);
+  pros::delay(1600);
+  //Wing
+  chassis.moveToPose(-10.629, 47.5,90,1450, {.forwards = false, .minSpeed=100}, false);
+  chassis.turnToPoint(-44.967,47.5,500,{.forwards=false},false);
+  wings.set_value(false);
+  chassis.moveToPoint(-28.967, 47.5, 1000, {.forwards=false, .minSpeed = 100, .earlyExitRange=5}, false);
+  chassis.moveToPoint(-44.967, 47.5, 1000, {.forwards=false, .maxSpeed = 40}, false);
+  chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+}
+void leftThreePlusFour(){
+  /*chassis.moveTo(0, 0, 5000);
+chassis.moveTo(0, 31.665, 5000);
+chassis.moveTo(-17.875, 31.665, 5000);
+chassis.moveTo(23.006, 32.165, 5000);
+chassis.moveTo(24.231, 7.787, 5000);
+chassis.moveTo(34.853, -2.835, 5000);
+chassis.moveTo(10.859, 23.159, 5000);
+chassis.moveTo(33.853, 23.159, 5000);
+
+
+
+*/
+  //setup
+  chassis.setPose(0,0,0); //X and Y might be changed btw,
+  wings.set_value(true);
+  redirect.set_value(false);
+  firstStageMotor.move(127);
+  secondStageMotor.move(-127);
+  //InBetween
+  chassis.moveToPoint(0,36.5, 1000, {}, false);
+  //MatchLoader
+  scraper.set_value(true);
+  chassis.turnToPoint(-17.875,35.51, 800, {}, false);
+  chassis.moveToPoint(-17.875, 35.51, 755, {.maxSpeed=50}, false);
+  //Long Goal
+  // chassis.turnToPoint(23.006,35.51, 400, {.forwards=false}, false);
+  chassis.moveToPoint(23.006, 35.51, 1200, {.forwards = false}, true);
+  pros::delay(700);
+  wings.set_value(false);
+  scraper.set_value(false);
+  pros::delay(800);
+  //Cluster
+  chassis.turnToPoint(22.231,7.787,800, {.minSpeed=40}, false);
+  wings.set_value(true);
+  chassis.moveToPoint(22.231,7.787,900,{.minSpeed=70,.earlyExitRange=5}, true);
+  
+  scraper.set_value(true);
+  chassis.moveToPoint(22.231,7.787, 150,{.maxSpeed=70}, false);
+ 
+  scraper.set_value(true);
+   pros::delay(300);
+  //MidGoal
+  chassis.turnToPoint(34.853, -2.835, 600, {.forwards=false}, false);
+  chassis.moveToPose(34.753,-2.835,315,750,{.forwards = false, .minSpeed=60},true);
+  pros::delay(550);
+  redirect.set_value(true);
+  pros::delay(200);
+  firstStageMotor.move(127);
+  secondStageMotor.move(-60);
+  pros::delay(1000);
+  //Wing
+  chassis.turnToPoint(10.859,27.5, 350, {}, false);
+  chassis.moveToPoint(10.859, 27.5, 1000, {.earlyExitRange=2}, false);
+  chassis.turnToPoint(30.853,27.5,500,{.forwards=false,.earlyExitRange=10},false);
+  wings.set_value(false);
+  chassis.moveToPoint(25.853,25.5, 1500, {.forwards=false,.minSpeed=127, .earlyExitRange=10});
+  chassis.moveToPoint(35.853,25.5, 1500, {.forwards=false,.maxSpeed=60});
+
+  chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 }
 // }
 // // get a path used for pure pursuit
@@ -695,7 +804,10 @@ void fourPlusThree()
       controlRush();
       break;
     case 2:
-      fourPlusThree();
+      rightFourPlusThree();
+      break;
+    case 3:
+      leftThreePlusFour();
       break;
      }
  }
@@ -705,9 +817,11 @@ void fourPlusThree()
  */
  void driverControl()
  {
+  redirect.set_value(false);
+  chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
   leftMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   rightMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-  chassis.setPose(0,0,0);
+  //chassis.setPose(0,0,0);
   float delayTime = 10;
   //Variables for presses
   bool R1 = false;
@@ -733,7 +847,7 @@ void fourPlusThree()
     //A Button Hold
     if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
       R1 = false;
-      redirect.set_value(false);
+      redirect.set_value(true);
       firstStageMotor.move(127);
       secondStageMotor.move(-42);
     }
@@ -752,7 +866,7 @@ void fourPlusThree()
     else if (R1){
         firstStageMotor.move(127);
 		    secondStageMotor.move(-127);
-        redirect.set_value(true);
+        redirect.set_value(false);
       } 
     else if (!R1){
       firstStageMotor.move(0);
@@ -778,9 +892,9 @@ void fourPlusThree()
     if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X) && !X){
       pros::Task screenTask([&]() {
         X = true;
-        redirect.set_value(false);
-        pros::delay(100);
         redirect.set_value(true);
+        pros::delay(100);
+        redirect.set_value(false);
         X = false;
       });
     }
