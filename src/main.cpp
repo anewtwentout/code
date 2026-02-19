@@ -145,26 +145,54 @@ void disabled() {}
  */
 
 bool autonomousRunning = false;
-int autonomousValue =0; // 0 = SAWP, 1 = right control rush, 2 = left control rush, 3 = right 3+4, 4 = left 3 +4
-int amountOfAutonomousCodes = 2;
+int autonomousValue =0; // 0 = SAWP, 1 = right control rush, 2 = left control rush, 3 = right 3+4, 4 = left 3 +4, 5 = Right 7 Push
+int amountOfAutonomousCodes = 6;
+
+void changeAutoValue(){
+pros::screen_touch_status_s_t screenTouch = pros::screen::touch_status();
+  pros::lcd::print(5, "XValue: %d", screenTouch.x); //making sure its working all right
+  if(screenTouch.x>=200){
+    autonomousValue = (autonomousValue+1)%amountOfAutonomousCodes;
+  }
+  if(screenTouch.x<200){
+    autonomousValue = (autonomousValue-1)%amountOfAutonomousCodes;
+  }
+  
+}
 void competition_initialize() {
+  pros::screen::touch_callback(changeAutoValue, TOUCH_PRESSED);
   pros::Task autonomousTask([&]() {
   while(true)
   {
-  if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
-    autonomousValue = (autonomousValue+1)%amountOfAutonomousCodes;
-  }
-  if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
-    autonomousValue = (autonomousValue-1)%amountOfAutonomousCodes;
-  }
+  // if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
+  //   autonomousValue = (autonomousValue+1)%amountOfAutonomousCodes;
+  // }
+  // if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
+  //   autonomousValue = (autonomousValue-1)%amountOfAutonomousCodes;
+  // }
   
   switch(autonomousValue){
     case 0:
       pros::lcd::print(0, "Autonomous: %s", "SAWP");
       break;
-    
+    case 1:
+      pros::lcd::print(0, "Autonomous: %s", "Right 4L");
+      break;
+    case 2:
+      pros::lcd::print(0, "Autonomous: %s", "Left 4L");
+      break;
+    case 3:
+      pros::lcd::print(0, "Autonomous: %s", "Right 4L+3M");
+      break;
+    case 4:
+      pros::lcd::print(0, "Autonomous: %s", "Left 4L+3M");
+      break;
+    case 5:
+      pros::lcd::print(0, "Autonomous: %s", "Right 7L Push");
+      break;
+       
   }
-  pros::delay(50);
+  pros::delay(10);
   }
 });
 
@@ -182,7 +210,7 @@ void SAWP(){
   //Right Match Loader
   scraper.set_value(true);
   chassis.turnToPoint(17.969,35.51,570,{},false);
-  chassis.moveToPoint(19.969,35.51,695,{.maxSpeed=40},false);
+  chassis.moveToPoint(19.969,35.51,685,{.maxSpeed=40},false);
   //Right Long Goal
   chassis.turnToPoint(-20.871,36.01,250,{.forwards = false}, false);
   chassis.moveToPoint(-20.871,36.01, 1000, {.forwards = false, .minSpeed = 60}, true);
@@ -198,9 +226,9 @@ void SAWP(){
   //scraper.set_value(true);
   //pros::delay(700);}
 //   //Second Cluster
-  chassis.turnToPoint(-26, -38.99, 150, {}, false);
-  chassis.moveToPoint(-26, -35.99, 600,  {.minSpeed=127}, false);
-  chassis.moveToPoint(-26, -40.99, 250, {.maxSpeed=40}, false);
+  chassis.turnToPoint(-21.644, -38.99, 150, {}, false);
+  chassis.moveToPoint(-21.644, -26.99, 600,  {.minSpeed=50}, true);
+  chassis.moveToPoint(-21.644, -38.99, 150, {.maxSpeed=40}, false);
   pros::delay(280);
  // scraper.set_value(true);
  // scraper.set_value(true);
@@ -230,13 +258,12 @@ void SAWP(){
   //chassis.turnToPoint(-36.644, -23.99, 500, {.forwards = false}, false);
  
   chassis.moveToPoint(6, -62.99,  300,{.forwards=false}, false);
-  chassis.turnToPoint(-36.644, -23.99, 100, {.forwards = false}, false);
+  chassis.turnToPoint(36.644, -23.99, 100, {}, false);
   chassis.moveToPose(-36.644, -23.99, 135, 1680, {.forwards = false, .minSpeed = 50}, true);
   pros::delay(1800);
   redirect.set_value(true);
   firstStageMotor.move(127);
-  secondStageMotor.move(-70);
-}
+  secondStageMotor.move(-60);}
 void rightControlRush()
 {
 // chassis.moveTo(0, 0, 5000);
@@ -420,6 +447,33 @@ chassis.moveTo(33.853, 23.159, 5000);
 
   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 }
+void rightSeven()
+{
+// chassis.moveTo(0, 0, 5000);
+// chassis.moveTo(-27.052, 10.922, 5000);
+// chassis.moveTo(-7.393, 30.581, 5000);
+// chassis.moveTo(13.274, 34.614, 5000);
+// chassis.moveTo(-20.835, 35.286, 5000);
+// chassis.moveTo(-11.258, 35.286, 5000);
+// chassis.moveTo(-19.659, 43.351, 5000);
+// chassis.moveTo(-40.158, 42.679, 5000);
+
+
+
+//setup
+chassis.setPose(0,0,0); //X and Y might be changed btw,
+wings.set_value(true);
+redirect.set_value(false);
+firstStageMotor.move(127);
+secondStageMotor.move(-127);
+//first cluster
+chassis.turnToPoint(6,20,300,{},false);
+chassis.moveToPoint(6,20,900,{},false);
+scraper.set_value(true);
+chassis.turnToPoint(22,1,300,{},false);
+chassis.moveToPoint(22,1,700,{},false);
+
+}
 
  void autonomous() {
    autonomousRunning = true;
@@ -438,6 +492,9 @@ chassis.moveTo(33.853, 23.159, 5000);
       break;
     case 4 :
       leftThreePlusFour();
+      break;
+    case 5:
+      rightSeven();
       break;
      }
      
@@ -488,7 +545,7 @@ chassis.moveTo(33.853, 23.159, 5000);
       R1 = false;
       L2 = true;
       intakeLift.set_value(true);
-      firstStageMotor.move(127*-5/12);
+      firstStageMotor.move(-127);
       secondStageMotor.move(127*5/12);
 
     }
