@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "EPIC DRIVER CODE",
+    "project_name": "drive skills",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -635,8 +635,9 @@
       }
     },
     "upload_options": {
-      "slot": 1,
-      "description": "Yes"
+      "slot": 8,
+      "description": "the driver skills ig",
+      "icon": "clawbot"
     },
     "use_early_access": false
   }
