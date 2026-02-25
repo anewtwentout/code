@@ -145,7 +145,7 @@ void disabled() {}
  */
 
 bool autonomousRunning = false;
-int autonomousValue =2; // 0 = SAWP, 1 = right control rush, 2 = left control rush, 3 = right 3+4, 4 = left 3 +4, 5 = Right 7 Push
+int autonomousValue =6; // 0 = SAWP, 1 = right control rush, 2 = left control rush, 3 = right 3+4, 4 = left 3 +4, 5 = Right 7 Push
 int amountOfAutonomousCodes = 6;
 
 void changeAutoValue(){
@@ -474,6 +474,44 @@ chassis.turnToPoint(22,1,300,{},false);
 chassis.moveToPoint(22,1,700,{},false);
 
 }
+void autonSkills()
+{
+  //setup
+chassis.setPose(0,0,0);
+firstStageMotor.move(127);
+secondStageMotor.move(-127);
+wings.set_value(true);
+redirect.set_value(false);
+//first cluster
+chassis.moveToPoint(0, 25.5, 1000,{.maxSpeed=80},false);
+firstStageMotor.move(127);
+secondStageMotor.move(-127);
+chassis.moveToPoint(0, 37, 600,{.maxSpeed=50},true);
+pros::delay(250);
+scraper.set_value(true);
+pros::delay(350);
+chassis.turnToHeading(-90, 650);
+chassis.moveToPoint(20, 37, 800,{.forwards=false},false);
+redirect.set_value(true);
+//firstStageMotor.move(-30);
+secondStageMotor.move(-60);
+pros::delay(500);
+redirect.set_value(false);
+//move to matchload
+scraper.set_value(false);
+secondStageMotor.move(0);
+chassis.moveToPoint(-36,37,1300,{},false);
+//pose reset shit
+lemlib::Pose pose = chassis.getPose();
+chassis.setPose(pose.x,pose.y,pose.theta-45);
+chassis.turnToHeading(180, 500,{},true);
+pros::delay(100);
+scraper.set_value(true);
+pros::delay(400);
+//matchload
+chassis.moveToPoint(-36, 20, 800,{.forwards=true,.maxSpeed=60},false);
+//wings.set_value(false);
+}
 
  void autonomous() {
    autonomousRunning = true;
@@ -495,6 +533,9 @@ chassis.moveToPoint(22,1,700,{},false);
       break;
     case 5:
       rightSeven();
+      break;
+    case 6:
+      autonSkills();
       break;
      }
      
