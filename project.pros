@@ -1,7 +1,7 @@
 {
     "py/object": "pros.conductor.project.Project",
     "py/state": {
-        "project_name": "auton skills",
+        "project_name": "Sd",
         "target": "v5",
         "templates": {
             "LemLib": {
@@ -634,11 +634,7 @@
                 "version": "9.2.0"
             }
         },
-        "upload_options": {
-            "description": "the skills ig",
-            "icon": "clawbot",
-            "slot": 7
-        },
+        "upload_options": {},
         "use_early_access": false
     }
 }

@@ -1,12 +1,5 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
-#include "lemlib/chassis/trackingWheel.hpp"
-#include "pros/misc.h"
-#include "pros/motor_group.hpp"
-#include "pros/motors.h"
-#include "pros/motors.hpp"
-#include "pros/rtos.h"
-#include "pros/rtos.hpp"
 //variables
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
