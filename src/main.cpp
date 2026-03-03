@@ -558,7 +558,7 @@ scraper.set_value(false);
 secondStageMotor.move(-127);
 chassis.moveToPoint(0,-44.75-2.5,1800,{},false);
 //Regular Right Side Long Goal
-chassis.turnToPoint(10+7,44.75-2.5,800,{.forwards=false},false);
+chassis.turnToPoint(10+7,-44.75-2.5,800,{.forwards=false},false);
 chassis.moveToPoint(10+7,-44.75-2.5, 2000., {.forwards=false}, false);
 wings.set_value(false);
 scraper.set_value(true);
@@ -569,7 +569,7 @@ scraper.set_value(true);
 chassis.turnToPoint(-14.5, -42.75-2.5,650+200,{},false);
 chassis.moveToPoint(-14.5,-42.75-2.5,1600,{},false);
 //Regular Right Side Long Goal
-chassis.turnToPoint(10+7,44.75-2.5,800,{.forwards=false},false);
+chassis.turnToPoint(10+7,-44.75-2.5,800,{.forwards=false},false);
 chassis.moveToPoint(10+7,-44.75-2.5, 2000., {.forwards=false}, false);
 wings.set_value(false);
 scraper.set_value(true);
