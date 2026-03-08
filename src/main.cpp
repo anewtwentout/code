@@ -108,7 +108,6 @@ void initialize() {
     chassis.calibrate(); // calibrate sensors
     chassis.setPose(0,0,0);
     wings.set_value(false);
-    intakeLift.set_value(true);
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
     // lemlib::bufferedStdout().setRate(...);
@@ -638,8 +637,6 @@ void Skills96()
 // pros::lcd::print(5, "Distance: %f", fD);
 // pros::lcd::print(6, "Distance: %f", rD);
 
-float xOffset = 6.023001-23.896378;
-float yOffset = 0.18906-66.610657-1; 
 //setup
 chassis.setPose(0,0,0);
 intakeLift.set_value(false);
@@ -652,90 +649,36 @@ redirect.set_value(false);
 
 
 
-chassis.moveToPoint(0,30,5000,{.maxSpeed=60,.minSpeed=60, },true);
-pros::delay(  1000);
+ chassis.moveToPoint(0,8,750,{.maxSpeed=80,.minSpeed=80, },false);
+// pros::delay(  1000);
+// scraper.set_value(true);
+// pros::delay(500);
+chassis.moveToPoint(0,36,4200,{.maxSpeed=65,.minSpeed=65 },true);
+pros::delay(650);
 scraper.set_value(true);
-pros::delay(1500);
+pros::delay(750);
+
 scraper.set_value(false);
-
-
+chassis.moveToPoint(0,chassis.getPose().y+5,1000,{}, false);
+chassis.moveToPoint(0,chassis.getPose().y-5,1000,{}, false);
+chassis.turnToHeading(90,500,{},false);
+chassis.moveToPoint(chassis.getPose().x+1, chassis.getPose().y, 300, {}, false);
+chassis.moveToPose(chassis.getPose().x-15, chassis.getPose().y, 90,1000, {.forwards=false}, false);
+float lD = leftDistance.get()/25.4;
+pros::lcd::print(6,"Distance:%d", lD);
+//1267/25.4 should corrospend with 0
+float yOffset = -1267/25.4;
+chassis.setPose(0,lD+yOffset,90);
 
 
 pros::delay(1000000000);
-float fD = frontDistance.get()/25.4;
-float rD = rightDistance.get()/25.4;
-float lD = leftDistance.get()/25.4;
-//first Movement
-//hassis.moveToPoint(0, -150/25.4,2000, {}, true);
- fD = frontDistance.get()*std::cos(chassis.getPose().theta*std::numbers::pi/180)/25.4;
- chassis.setPose(chassis.getPose().x, -fD,chassis.getPose().theta);
- //chassis.moveToPoint(0,-180/25.4,500, {.minSpeed=40}, true);
-//  for(int i = 0; i <5; i++){
-//   if(fD>30/25.4){
-//   fD = frontDistance.get()*std::cos(chassis.getPose().theta*std::numbers::pi/180)/25.4;
-//   chassis.setPose(chassis.getPose().x, -fD,chassis.getPose().theta);
-  
-//   }
-//   pros::delay(100);
-//  }
-chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+// float fD = frontDistance.get()/25.4;
+// float rD = rightDistance.get()/25.4;
+// float lD = leftDistance.get()/25.4;
 
-chassis.moveToPoint(0,chassis.getPose().y-1,500,{.forwards=false,.minSpeed=45},false);
-pros::delay(500);
-for(int i = 0; i <5; i ++){
-  chassis.turnToHeading(20,100,{},false);
-  chassis.turnToHeading(-20,100,{},false);
-}
- //Third movement
- chassis.moveToPoint(0,-90/25.4,700,{.minSpeed=60},true);
- for(int i = 0; i < 5; i++){
-   if(fD>30/25.4){
-  fD = frontDistance.get()*std::cos(chassis.getPose().theta*std::numbers::pi/180)/25.4;
-  chassis.setPose(chassis.getPose().x, -fD,chassis.getPose().theta);
-   }
-   pros::delay(100);
-}
-//Fourth movement
-for(int i = 0; i <5; i ++){
-  chassis.turnToHeading(30,100,{},false);
-  chassis.turnToHeading(-30,100,{},false);
-}
-pros::delay(500);
-chassis.moveToPoint(0,chassis.getPose().y-2,1000,{.forwards=false,.minSpeed=40},false);
-
-chassis.moveToPoint(0,chassis.getPose().y+4,1000,{.forwards=false,.minSpeed=127},false);
-pros::delay(500);
-//Move back
-chassis.moveToPoint(0,-18,1000,{.forwards=false, .minSpeed=40},false);
-//Rotate
-chassis.turnToHeading(0,500,{},false); 
-//Distance Reset
-// float fDTemp;
-// float fDConfidenceTemp;
-// float rDTemp;
-// float rDConfidenceTemp;
-// for(int i = 0; i < 5; i++){
 // fD = frontDistance.get()*std::cos(chassis.getPose().theta*std::numbers::pi/180)/25.4;
-// if(frontDistance.get_confidence() > fDConfidenceTemp){
-//   fDConfidenceTemp = frontDistance.get_confidence();
-//   fDTemp = fD;
-// }
 // rD = rightDistance.get()*std::cos((chassis.getPose().theta)*std::numbers::pi/180)/25.4;
-// if(rightDistance.get_confidence() > rDConfidenceTemp){
-//   fDConfidenceTemp = rightDistance.get_confidence();
-//   rDTemp = rD;
-// }
-// if(rDConfidenceTemp == 63 && fDConfidenceTemp == 63){
-//   break;
-// }
-// pros::lcd::print(6,"Confidence: %d", frontDistance.get_confidence());
-// pros::delay(20);
-// }
-// fD = fDTemp;
-// rD = rDTemp; //memory leak oh nooooooooooo
-fD = frontDistance.get()*std::cos(chassis.getPose().theta*std::numbers::pi/180)/25.4;
-rD = rightDistance.get()*std::cos((chassis.getPose().theta)*std::numbers::pi/180)/25.4;
-chassis.setPose(fD+xOffset, rD + yOffset, chassis.getPose().theta+270);
+//chassis.setPose(fD+xOffset, rD + yOffset, chassis.getPose().theta+270);
 
 
 
