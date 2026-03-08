@@ -18,7 +18,7 @@ pros::Motor secondStageMotor(2, pros::MotorGearset::blue);
 //Distance Sensors
 pros::Distance frontDistance(8);
 pros::Distance rightDistance(9);
-pros::Distance leftDistane(10);
+pros::Distance leftDistance(10);
 // Inertial Sensor on port 17
 pros::Imu imu(17);
 //Odom
@@ -652,15 +652,9 @@ redirect.set_value(false);
 
 float fD = frontDistance.get()/25.4;
 float rD = rightDistance.get()/25.4;
+float lD = leftDistance.get()/25.4;
 //first Movement
 //hassis.moveToPoint(0, -150/25.4,2000, {}, true);
-pros::Task distanceTask([&]() {
-while(true){
-pros::lcd::print(5, "Distance: %f", fD);
-pros::delay(100);
-}
-});
-
  fD = frontDistance.get()*std::cos(chassis.getPose().theta*std::numbers::pi/180)/25.4;
  chassis.setPose(chassis.getPose().x, -fD,chassis.getPose().theta);
  //chassis.moveToPoint(0,-180/25.4,500, {.minSpeed=40}, true);
@@ -673,8 +667,9 @@ pros::delay(100);
 //   pros::delay(100);
 //  }
 chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-
-pros::delay(200);
+pros::delay(1000);
+chassis.moveToPoint(0,chassis.getPose().y-1,500,{.forwards=false,.minSpeed=45},false);
+pros::delay(500);
 for(int i = 0; i <5; i ++){
   chassis.turnToHeading(20,100,{},false);
   chassis.turnToHeading(-20,100,{},false);
@@ -690,14 +685,41 @@ for(int i = 0; i <5; i ++){
 }
 //Fourth movement
 for(int i = 0; i <5; i ++){
-  chassis.turnToHeading(20,100,{},false);
-  chassis.turnToHeading(-20,100,{},false);
+  chassis.turnToHeading(30,100,{},false);
+  chassis.turnToHeading(-30,100,{},false);
 }
+pros::delay(500);
+chassis.moveToPoint(0,chassis.getPose().y-2,1000,{.forwards=false,.minSpeed=40},false);
+chassis.moveToPoint(0,chassis.getPose().y+4,1000,{.forwards=false,.minSpeed=127},false);
+pros::delay(500);
 //Move back
-chassis.moveToPoint(0,-20,1000,{.forwards=false, .minSpeed=40},false);
+chassis.moveToPoint(0,-18,1000,{.forwards=false, .minSpeed=40},false);
 //Rotate
-chassis.turnToHeading(0,1000,{},false);
+chassis.turnToHeading(0,1000,{},false); 
 //Distance Reset
+// float fDTemp;
+// float fDConfidenceTemp;
+// float rDTemp;
+// float rDConfidenceTemp;
+// for(int i = 0; i < 5; i++){
+// fD = frontDistance.get()*std::cos(chassis.getPose().theta*std::numbers::pi/180)/25.4;
+// if(frontDistance.get_confidence() > fDConfidenceTemp){
+//   fDConfidenceTemp = frontDistance.get_confidence();
+//   fDTemp = fD;
+// }
+// rD = rightDistance.get()*std::cos((chassis.getPose().theta)*std::numbers::pi/180)/25.4;
+// if(rightDistance.get_confidence() > rDConfidenceTemp){
+//   fDConfidenceTemp = rightDistance.get_confidence();
+//   rDTemp = rD;
+// }
+// if(rDConfidenceTemp == 63 && fDConfidenceTemp == 63){
+//   break;
+// }
+// pros::lcd::print(6,"Confidence: %d", frontDistance.get_confidence());
+// pros::delay(20);
+// }
+// fD = fDTemp;
+// rD = rDTemp; //memory leak oh nooooooooooo
 fD = frontDistance.get()*std::cos(chassis.getPose().theta*std::numbers::pi/180)/25.4;
 rD = rightDistance.get()*std::cos((chassis.getPose().theta)*std::numbers::pi/180)/25.4;
 chassis.setPose(fD+xOffset, rD + yOffset, chassis.getPose().theta+270);
@@ -717,38 +739,48 @@ firstStageMotor.move(127);
 secondStageMotor.move(-127);
 wings.set_value(true);
 redirect.set_value(false);
+
 //Before
 chassis.turnToPoint(0,54.5+0.25-1+.25-4,800,{},false);
 chassis.moveToPoint(0,54.5+0.25-1+.25-4,1200,{},false);
-chassis.turnToHeading(-0, 500);
+//chassis.turnToHeading(0, 1000);
+// fD = frontDistance.get()*std::cos((chassis.getPose().theta)*std::numbers::pi/180)/25.4;
+// lD = leftDistance.get()*std::cos((chassis.getPose().theta)*std::numbers::pi/180)/25.4;
+// xOffset = -20;
+// yOffset = 36;
+// chassis.setPose(lD+xOffset,fD+yOffset,chassis.getPose().theta);
 //First Left Cluster
-chassis.turnToPoint(18.55-.1,29.53+1,900,{},false);
-chassis.moveToPoint(18.55-.1, 29.53+1, 1600,{},false);
-firstStageMotor.move(127);
+chassis.turnToPoint(39-21,11.23+21,900,{},false);
+chassis.moveToPoint(39-21, 11.23+21, 1600,{},false);
+
+firstStageMotor.move(0);
 secondStageMotor.move(-127);
 //chassis.moveToPoint(26.163, 26.163, 1000,{.maxSpeed=30},true);
 //MidGoal 
-chassis.turnToPoint(39.55-1+.25,8.53+1,550, {.forwards=false},false);
-chassis.moveToPose(39.55-1+.25, 8.53+1,315, 3200,{.forwards=false},false);
+chassis.turnToPoint(39,11.23,550, {.forwards=false},false);
+chassis.moveToPose(39, 11.23,315, 3200,{.forwards=false},false);
 redirect.set_value(true);
-secondStageMotor.move(-60);
+firstStageMotor.move(127);
+secondStageMotor.move(-40);
+pros::delay(1200);
+secondStageMotor.move(-30);
 pros::delay(2000);
 
 //pros::delay(100000);
 //First Left Inbetween
 scraper.set_value(false);
 // secondStageMotor.move(-127);
-chassis.moveToPoint(0,54.5+0.25-1+.25-6+.1,1200,{},false);
+chassis.moveToPoint(0,54.5+0.25-1+.25-6+.1+2-.5,1200,{},false);
 redirect.set_value(false);
 firstStageMotor.move(127);
 secondStageMotor.move(-127);
 //First Left Matchloader
 scraper.set_value(true);
-chassis.turnToPoint(-14.5, 54.5+0.25-1+.25-6+.1,650,{},false);
+chassis.turnToPoint(-14.5, 54.5+0.25-1+.25-6+.1+2-.5,650,{},false);
 // rD = rightDistance.get()*std::cos((chassis.getPose().theta+90)*std::numbers::pi/180)/25.4;
 // yOffset = 54.359063-18.621920;
 // chassis.setPose(chassis.getPose().x, rD + yOffset, chassis.getPose().theta);
-chassis.moveToPoint(-14.5,54.5+0.25-1+.25-6+.1,1600+500,{.maxSpeed=85},false);
+chassis.moveToPoint(-14.5,54.5+0.25-1+.25-6+.1+2-.5,1600+500,{.maxSpeed=85},false);
 
 //Move Outside
 secondStageMotor.move(0);
@@ -760,11 +792,11 @@ chassis.moveToPoint(14,67-3,600,{.forwards=false},false);
 chassis.turnToPoint(96,67-3,500,{.forwards=false},false);
 chassis.moveToPoint(96,67-3,1650,{.forwards=false},false);
 //Move In Between
-chassis.turnToPoint(96,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2+.1,600,{},false);//Long Goal
-chassis.moveToPoint(96,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2+.1,700+400,{},false);//Long Goal
+chassis.turnToPoint(96,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2,600,{},false);//Long Goal
+chassis.moveToPoint(96,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2,700+400,{},false);//Long Goal
 //Long Goal
-chassis.turnToPoint(76+1,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2+.1,650,{.forwards=false},false);//Long Goal
-chassis.moveToPoint(76+1,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2+.1,800,{.forwards=false},false);//Long Goal
+chassis.turnToPoint(76+1,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2,650,{.forwards=false},false);//Long Goal
+chassis.moveToPoint(76+1,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2,800,{.forwards=false},false);//Long Goal
 //score
 secondStageMotor.move(-127);
 wings.set_value(false);
@@ -780,8 +812,8 @@ wings.set_value(true);
 pros::delay(400);
 chassis.moveToPoint(111,52.5+0.75+0.5-0.25-1.5-.5-1+.1-1+.1,1400,{.maxSpeed=80},false);
 //Long Goal
-chassis.turnToPoint(76+1,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2+.1,500,{.forwards=false},false);
-chassis.moveToPoint(76+1,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2+.1,800,{.forwards=false},false);//Long Goal
+chassis.turnToPoint(76+1,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2,500,{.forwards=false},false);
+chassis.moveToPoint(76+1,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2,800,{.forwards=false},false);//Long Goal
 //Score
 secondStageMotor.move(-127);
 wings.set_value(false);
@@ -792,10 +824,12 @@ pros::delay(2000);
 // wings.set_value(true);
 // chassis.moveToPoint(76-2+3,52.5+0.75+0.5-0.75+0.1-0.5-.25-.25-.125,1200,{.forwards=false,.maxSpeed=20},false);//Long Goal
 //Guessing After This
-wings.set_value(true);
-
+pros::delay(1000000);
 //Move out A little
+secondStageMotor.move(100);
 chassis.moveToPoint(90,52.5+0.75+0.5-0.75+0.1-0.5-.25-.125-.5,1000, {}, false);
+wings.set_value(true);
+secondStageMotor.move(-127);
 //Inbetween Other Left side
 chassis.turnToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2,1500,{},false);
 chassis.moveToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2,2500,{},false);
@@ -810,7 +844,6 @@ chassis.moveToPoint(85,-63,800,{.forwards=false},false);
 //Move To Regular Side
 chassis.turnToPoint(0,-63,800,{.forwards=false},false);
 chassis.moveToPoint(0,-63,2500,{.forwards=false},false);
-pros::delay(100000);
 //Regular Side Right Inbetween
 scraper.set_value(false);
 secondStageMotor.move(-127);
