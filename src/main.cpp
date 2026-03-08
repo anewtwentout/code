@@ -794,7 +794,6 @@ pros::delay(2000);
 //Guessing After This
 wings.set_value(true);
 
-pros::delay(100000);
 //Move out A little
 chassis.moveToPoint(90,52.5+0.75+0.5-0.75+0.1-0.5-.25-.125-.5,1000, {}, false);
 //Inbetween Other Left side
@@ -811,6 +810,7 @@ chassis.moveToPoint(85,-63,800,{.forwards=false},false);
 //Move To Regular Side
 chassis.turnToPoint(0,-63,800,{.forwards=false},false);
 chassis.moveToPoint(0,-63,2500,{.forwards=false},false);
+pros::delay(100000);
 //Regular Side Right Inbetween
 scraper.set_value(false);
 secondStageMotor.move(-127);
