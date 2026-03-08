@@ -1,5 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "pros/motors.h"
+#include <numbers>
 //variables
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -13,7 +15,10 @@ pros::MotorGroup leftMotors({-11, -12, -13}, pros::MotorGearset::blue);
 pros::MotorGroup rightMotors({14, 15, 16}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
 pros::Motor firstStageMotor(1, pros::MotorGearset::blue);
 pros::Motor secondStageMotor(2, pros::MotorGearset::blue);
-
+//Distance Sensors
+pros::Distance frontDistance(8);
+pros::Distance rightDistance(9);
+pros::Distance leftDistane(10);
 // Inertial Sensor on port 17
 pros::Imu imu(17);
 //Odom
@@ -103,6 +108,7 @@ void initialize() {
     chassis.calibrate(); // calibrate sensors
     chassis.setPose(0,0,0);
     wings.set_value(false);
+    intakeLift.set_value(true);
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
     // lemlib::bufferedStdout().setRate(...);
@@ -131,15 +137,18 @@ void initialize() {
 /**
  * Runs while the robot is disabled
  */
-void disabled() {}
+void disabled() {
+
+
+}
 
 /**
  * runs after initialize if the robot is connected to field control
  */
 
 bool autonomousRunning = false;
-int autonomousValue =6; // 0 = SAWP, 1 = right control rush, 2 = left control rush, 3 = right 3+4, 4 = left 3 +4, 5 = Right 7 Push
-int amountOfAutonomousCodes = 6;
+int autonomousValue =7; // 0 = SAWP, 1 = right control rush, 2 = left control rush, 3 = right 3+4, 4 = left 3 +4, 5 = Right 7 Push, 6 = autonSkills
+int amountOfAutonomousCodes = 8;
 
 void changeAutoValue(){
 pros::screen_touch_status_s_t screenTouch = pros::screen::touch_status();
@@ -467,8 +476,10 @@ chassis.turnToPoint(22,1,300,{},false);
 chassis.moveToPoint(22,1,700,{},false);
 
 }
+
 void autonSkills()
 {
+  chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
   /*chassis.moveTo(0, 0, 5000);
 chassis.moveTo(18.031, 18.031, 5000);
 chassis.moveTo(26.163, 26.163, 5000);
@@ -490,8 +501,8 @@ chassis.moveToPoint(26.163, 26.163, 700,{.maxSpeed=30},true);
 chassis.turnToPoint(39.305+1.5-0.5,11.021-0.5,550, {.forwards=false},false);
 chassis.moveToPose(39.305+1.5-0.5, 11.021-0.5,315, 1200,{.forwards=false},false);
 redirect.set_value(true);
-secondStageMotor.move(-40);
-pros::delay(600);
+secondStageMotor.move(-80);
+pros::delay(300);
 firstStageMotor.move(0);
 secondStageMotor.move(50);
 //First Left Inbetween
@@ -504,8 +515,11 @@ secondStageMotor.move(-127);
 //First Left Matchloader
 scraper.set_value(true);
 chassis.turnToPoint(-14.5, 54.5+0.25-1+.25,650,{},false);
-chassis.moveToPoint(-14.5,54.5+0.25-1+.25,1600,{},false);
+chassis.moveToPoint(-14.5,54.5+0.25-1+.25,1600+500,{.maxSpeed=85},false);
+
+
 //Move Outside
+secondStageMotor.move(0);
 chassis.moveToPoint(-0, 54.5,600,{.forwards=false},false);
 chassis.turnToPoint(14,68-1.5,400,{.forwards=false},false);
 chassis.moveToPoint(14,68-1.5,600,{.forwards=false},false);
@@ -514,45 +528,50 @@ chassis.moveToPoint(14,68-1.5,600,{.forwards=false},false);
 chassis.turnToPoint(96,68-1.5,500,{.forwards=false},false);
 chassis.moveToPoint(96,68-1.5,1650,{.forwards=false},false);
 //Move In Between
-chassis.turnToPoint(96,52.5+0.75+0.5-0.75+0.1,600,{},false);//Long Goal
-chassis.moveToPoint(96,52.5+0.75+0.5-0.75+0.1,700,{},false);//Long Goal
+chassis.turnToPoint(96,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4,600,{},false);//Long Goal
+chassis.moveToPoint(96,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4,700+400,{},false);//Long Goal
 //Long Goal
-chassis.turnToPoint(76-2+3,52.5+0.75+0.5-0.75+0.1,650,{.forwards=false},false);//Long Goal
-chassis.moveToPoint(76-2+3,52.5+0.75+0.5-0.75+0.1,800,{.forwards=false},false);//Long Goal
+chassis.turnToPoint(76-2+3,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4,650,{.forwards=false},false);//Long Goal
+chassis.moveToPoint(76-2+3,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4,800,{.forwards=false},false);//Long Goal
 //score
+secondStageMotor.move(-127);
 wings.set_value(false);
 scraper.set_value(true);
 pros::delay(1800);
-
 //Matchloader
-chassis.turnToPoint(111, 52.5+0.75+0.5-0.25-1.5,800, {}, false);
-chassis.moveToPoint(101, 52.5+0.75+0.5-0.25-1.5,1000,{}, false);
+chassis.turnToPoint(111, 52.5+0.75+0.5-0.25-1.5-.5-1+.1,800, {}, false);
+chassis.moveToPoint(101, 52.5+0.75+0.5-0.25-1.5-.5-1+.1,1000,{}, true);
+pros::delay(600);
 wings.set_value(true);
-chassis.moveToPoint(111,52.5+0.75+0.5-0.25-1.5,1400,{.maxSpeed=80},false);
+pros::delay(400);
+chassis.moveToPoint(111,52.5+0.75+0.5-0.25-1.5-.5-1+.1,1400,{.maxSpeed=80},false);
 //Long Goal
-chassis.turnToPoint(76-2+3,52.5+0.75+0.5-0.75+0.1,500,{.forwards=false},false);
-chassis.moveToPoint(76-2+3,52.5+0.75+0.5-0.75+0.1,800,{.forwards=false},false);//Long Goal
+chassis.turnToPoint(76-2+3,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4,500,{.forwards=false},false);
+chassis.moveToPoint(76-2+3,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4,800,{.forwards=false},false);//Long Goal
 //Score
-secondStageMotor.move(-107);
+secondStageMotor.move(-127);
 wings.set_value(false);
 scraper.set_value(true);
 pros::delay(2000);
 //HitBalls back
-chassis.moveToPoint(76-2+12,52.5+0.75+0.5-0.75+0.1,800,{}, false);
-wings.set_value(true);
-chassis.moveToPoint(76-2+3,52.5+0.75+0.5-0.75+0.1,1200,{.forwards=false,.maxSpeed=20},false);//Long Goal
-pros::delay(9999999);
+// chassis.moveToPoint(76-2+12,52.5+0.75+0.5-0.75+0.1,800,{}, false);
+// wings.set_value(true);
+// chassis.moveToPoint(76-2+3,52.5+0.75+0.5-0.75+0.1-0.5-.25-.25-.125,1200,{.forwards=false,.maxSpeed=20},false);//Long Goal
 //Guessing After This
+wings.set_value(true);
+
+
 //Move out A little
-chassis.moveToPoint(90,52.5+0.75+0.5-0.25,1000, {}, false);
+chassis.moveToPoint(90,52.5+0.75+0.5-0.75+0.1-0.5-.25-.125-.5,1000, {}, false);
 //Inbetween Other Left side
-chassis.turnToPoint(90,-43.25-2.5-0-6.5,1500,{},false);
-chassis.moveToPoint(90,-43.25-2.5-0-6.5,2500,{},false);
+chassis.turnToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2,1500,{},false);
+chassis.moveToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2,2500,{},false);
 //Left MatchLoader
-chassis.turnToPoint(111, -43.25-2.5-0-6.5,800, {}, false);
-chassis.moveToPoint(111,-43.25-2.5-0-6.5,1800,{.maxSpeed=80},false);
+chassis.turnToPoint(112, -43.25-2.5-0-6.5+2+0.125+.5-.25-.2,800, {}, false);
+chassis.moveToPoint(112,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2,1800,{.maxSpeed=40},false);
+
 //Move Outside
-chassis.moveToPoint(95, -43.25-3.5-2,700,{.forwards=false},false);
+chassis.moveToPoint(95, -63,700,{.forwards=false},false);
 chassis.turnToPoint(85,-63,400,{.forwards=false},false);
 chassis.moveToPoint(85,-63,800,{.forwards=false},false);
 //Move To Regular Side
@@ -561,25 +580,43 @@ chassis.moveToPoint(0,-63,2500,{.forwards=false},false);
 //Regular Side Right Inbetween
 scraper.set_value(false);
 secondStageMotor.move(-127);
-chassis.moveToPoint(0,-44.75-2,1800,{},false);
+chassis.moveToPoint(0,-44.75-2-.5-1,1800,{},false);
 //Regular Right Side Long Goal
-chassis.turnToPoint(10+9,-44.75-2,800,{.forwards=false},false);
-chassis.moveToPoint(10+9,-44.75-2, 2000., {.forwards=false}, false);
+chassis.turnToPoint(10+6,-44.75-2-.5-1-2,800,{.forwards=false},false);
+chassis.moveToPoint(10+6,-44.75-2-.5-1-2, 2000., {.forwards=false}, false);
 wings.set_value(false);
 scraper.set_value(true);
 pros::delay(1800);
 wings.set_value(true);
 //Regular Side Right Matchloader
 scraper.set_value(true);
-chassis.turnToPoint(-14.5, -42.75-2.5+5,650+200,{},false);
-chassis.moveToPoint(-14.5,-42.75-2.5+5,1600,{.maxSpeed=80},false);
+chassis.turnToPoint(-14.5, -44.75-2-.5+2,650+200,{},false);
+chassis.moveToPoint(-14.5,-44.75-2-.5+2,1600,{.maxSpeed=80},false);
 //Regular Right Side Long Goal
-chassis.turnToPoint(10+9,-44.75-2,800,{.forwards=false},false);
-chassis.moveToPoint(10+9,-44.75-2, 2000., {.forwards=false}, false);
+chassis.turnToPoint(10+6,-44.75-2-.5-1-2,800,{.forwards=false},false);
+chassis.moveToPoint(10+6,-44.75-2-.5-1-2, 2000., {.forwards=false}, false);
 wings.set_value(false);
 scraper.set_value(true);
 pros::delay(1800);
 wings.set_value(true);
+//Parking Zone
+scraper.set_value(false);
+chassis.moveToPoint(-25,-15,2000,{},false);
+chassis.turnToHeading(0,1000,{},false);
+float fDDistance = frontDistance.get()/25.4;
+chassis.setPose(chassis.getPose().x,-fDDistance,chassis.getPose().theta);
+chassis.moveToPose(-25,-1650/25.4,0,3500,{},true);
+pros::delay(500);
+for(int i = 0; i < 30; i++){
+  
+  float fDDistance = frontDistance.get()/25.4;
+  if(fDDistance<1800 && fDDistance > 1000){
+  chassis.setPose(chassis.getPose().x,-fDDistance,chassis.getPose().theta);
+  }
+  pros::delay(100);
+}
+
+
 //Match Loader Other Side Right Side
 // chassis.moveToPoint(94+32,55,1600, {}, false);
 // //Back To Scoring
@@ -588,6 +625,234 @@ wings.set_value(true);
 // scraper.set_value(false);
 // pros::delay(1200);
 }
+void Skills96()
+{
+  //finding offset using 77 route
+// chassis.setPose(0,0,45);
+// chassis.moveToPoint(7,7,1000,{},false);
+// chassis.turnToPoint(7,0,1000,{},false);
+// chassis.moveToPoint(7,0,1000,{},false);
+// chassis.turnToHeading(270,1000,{},false);
+// float fD = frontDistance.get()*std::cos((chassis.getPose().theta-270)*std::numbers::pi/180)/25.4;
+// float rD = rightDistance.get()*std::cos((chassis.getPose().theta-270)*std::numbers::pi/180)/25.4;
+// pros::lcd::print(5, "Distance: %f", fD);
+// pros::lcd::print(6, "Distance: %f", rD);
+
+float xOffset = 6.023001-23.896378;
+float yOffset = 0.18906-66.610657-1; 
+//setup
+chassis.setPose(0,0,0);
+intakeLift.set_value(false);
+// chassis.calibrate(true);
+chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+firstStageMotor.move(127);
+secondStageMotor.move(-127);
+wings.set_value(true);
+redirect.set_value(false);
+
+float fD = frontDistance.get()/25.4;
+float rD = rightDistance.get()/25.4;
+//first Movement
+//hassis.moveToPoint(0, -150/25.4,2000, {}, true);
+pros::Task distanceTask([&]() {
+while(true){
+pros::lcd::print(5, "Distance: %f", fD);
+pros::delay(100);
+}
+});
+
+ fD = frontDistance.get()*std::cos(chassis.getPose().theta*std::numbers::pi/180)/25.4;
+ chassis.setPose(chassis.getPose().x, -fD,chassis.getPose().theta);
+ //chassis.moveToPoint(0,-180/25.4,500, {.minSpeed=40}, true);
+//  for(int i = 0; i <5; i++){
+//   if(fD>30/25.4){
+//   fD = frontDistance.get()*std::cos(chassis.getPose().theta*std::numbers::pi/180)/25.4;
+//   chassis.setPose(chassis.getPose().x, -fD,chassis.getPose().theta);
+  
+//   }
+//   pros::delay(100);
+//  }
+chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+
+pros::delay(200);
+for(int i = 0; i <5; i ++){
+  chassis.turnToHeading(20,100,{},false);
+  chassis.turnToHeading(-20,100,{},false);
+}
+ //Third movement
+ chassis.moveToPoint(0,-90/25.4,700,{.minSpeed=60},true);
+ for(int i = 0; i < 5; i++){
+   if(fD>30/25.4){
+  fD = frontDistance.get()*std::cos(chassis.getPose().theta*std::numbers::pi/180)/25.4;
+  chassis.setPose(chassis.getPose().x, -fD,chassis.getPose().theta);
+   }
+   pros::delay(100);
+}
+//Fourth movement
+for(int i = 0; i <5; i ++){
+  chassis.turnToHeading(20,100,{},false);
+  chassis.turnToHeading(-20,100,{},false);
+}
+//Move back
+chassis.moveToPoint(0,-20,1000,{.forwards=false, .minSpeed=40},false);
+//Rotate
+chassis.turnToHeading(0,1000,{},false);
+//Distance Reset
+fD = frontDistance.get()*std::cos(chassis.getPose().theta*std::numbers::pi/180)/25.4;
+rD = rightDistance.get()*std::cos((chassis.getPose().theta)*std::numbers::pi/180)/25.4;
+chassis.setPose(fD+xOffset, rD + yOffset, chassis.getPose().theta+270);
+
+
+
+
+
+
+
+
+
+
+
+
+firstStageMotor.move(127);
+secondStageMotor.move(-127);
+wings.set_value(true);
+redirect.set_value(false);
+//Before
+chassis.turnToPoint(0,54.5+0.25-1+.25-4,800,{},false);
+chassis.moveToPoint(0,54.5+0.25-1+.25-4,1200,{},false);
+chassis.turnToHeading(-0, 500);
+//First Left Cluster
+chassis.turnToPoint(18.55-.1,29.53+1,900,{},false);
+chassis.moveToPoint(18.55-.1, 29.53+1, 1600,{},false);
+firstStageMotor.move(127);
+secondStageMotor.move(-127);
+//chassis.moveToPoint(26.163, 26.163, 1000,{.maxSpeed=30},true);
+//MidGoal 
+chassis.turnToPoint(39.55-1+.25,8.53+1,550, {.forwards=false},false);
+chassis.moveToPose(39.55-1+.25, 8.53+1,315, 3200,{.forwards=false},false);
+redirect.set_value(true);
+secondStageMotor.move(-60);
+pros::delay(2000);
+
+//pros::delay(100000);
+//First Left Inbetween
+scraper.set_value(false);
+// secondStageMotor.move(-127);
+chassis.moveToPoint(0,54.5+0.25-1+.25-6+.1,1200,{},false);
+redirect.set_value(false);
+firstStageMotor.move(127);
+secondStageMotor.move(-127);
+//First Left Matchloader
+scraper.set_value(true);
+chassis.turnToPoint(-14.5, 54.5+0.25-1+.25-6+.1,650,{},false);
+// rD = rightDistance.get()*std::cos((chassis.getPose().theta+90)*std::numbers::pi/180)/25.4;
+// yOffset = 54.359063-18.621920;
+// chassis.setPose(chassis.getPose().x, rD + yOffset, chassis.getPose().theta);
+chassis.moveToPoint(-14.5,54.5+0.25-1+.25-6+.1,1600+500,{.maxSpeed=85},false);
+
+//Move Outside
+secondStageMotor.move(0);
+chassis.moveToPoint(-0, 54.5,600,{.forwards=false},false);
+chassis.turnToPoint(14,67-3,400,{.forwards=false},false);
+chassis.moveToPoint(14,67-3,600,{.forwards=false},false);
+//Move to Other Side
+// scraper.set_value(false);
+chassis.turnToPoint(96,67-3,500,{.forwards=false},false);
+chassis.moveToPoint(96,67-3,1650,{.forwards=false},false);
+//Move In Between
+chassis.turnToPoint(96,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2+.1,600,{},false);//Long Goal
+chassis.moveToPoint(96,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2+.1,700+400,{},false);//Long Goal
+//Long Goal
+chassis.turnToPoint(76+1,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2+.1,650,{.forwards=false},false);//Long Goal
+chassis.moveToPoint(76+1,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2+.1,800,{.forwards=false},false);//Long Goal
+//score
+secondStageMotor.move(-127);
+wings.set_value(false);
+scraper.set_value(true);
+pros::delay(1800);
+//Matchloader
+
+
+chassis.turnToPoint(111, 52.5+0.75+0.5-0.25-1.5-.5-1+.1-1+.1,800, {}, false);
+chassis.moveToPoint(101, 52.5+0.75+0.5-0.25-1.5-.5-1+.1-1+.1,1000,{}, true);
+pros::delay(600);
+wings.set_value(true);
+pros::delay(400);
+chassis.moveToPoint(111,52.5+0.75+0.5-0.25-1.5-.5-1+.1-1+.1,1400,{.maxSpeed=80},false);
+//Long Goal
+chassis.turnToPoint(76+1,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2+.1,500,{.forwards=false},false);
+chassis.moveToPoint(76+1,52.5+0.75+0.5-0.75+0.1-0.5-.25-.4-2+.1,800,{.forwards=false},false);//Long Goal
+//Score
+secondStageMotor.move(-127);
+wings.set_value(false);
+scraper.set_value(true);
+pros::delay(2000);
+//HitBalls back
+// chassis.moveToPoint(76-2+12,52.5+0.75+0.5-0.75+0.1,800,{}, false);
+// wings.set_value(true);
+// chassis.moveToPoint(76-2+3,52.5+0.75+0.5-0.75+0.1-0.5-.25-.25-.125,1200,{.forwards=false,.maxSpeed=20},false);//Long Goal
+//Guessing After This
+wings.set_value(true);
+
+pros::delay(100000);
+//Move out A little
+chassis.moveToPoint(90,52.5+0.75+0.5-0.75+0.1-0.5-.25-.125-.5,1000, {}, false);
+//Inbetween Other Left side
+chassis.turnToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2,1500,{},false);
+chassis.moveToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2,2500,{},false);
+//Left MatchLoader
+chassis.turnToPoint(112, -43.25-2.5-0-6.5+2+0.125+.5-.25-.2,800, {}, false);
+chassis.moveToPoint(112,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2,1800,{.maxSpeed=40},false);
+
+//Move Outside
+chassis.moveToPoint(95, -63,700,{.forwards=false},false);
+chassis.turnToPoint(85,-63,400,{.forwards=false},false);
+chassis.moveToPoint(85,-63,800,{.forwards=false},false);
+//Move To Regular Side
+chassis.turnToPoint(0,-63,800,{.forwards=false},false);
+chassis.moveToPoint(0,-63,2500,{.forwards=false},false);
+//Regular Side Right Inbetween
+scraper.set_value(false);
+secondStageMotor.move(-127);
+chassis.moveToPoint(0,-44.75-2-.5-1+3,1800,{},false);
+//Regular Right Side Long Goal
+chassis.turnToPoint(10+6,-44.75-2-.5-1-2+3,800,{.forwards=false},false);
+chassis.moveToPoint(10+6,-44.75-2-.5-1-2+3, 2000., {.forwards=false}, false);
+wings.set_value(false);
+scraper.set_value(true);
+pros::delay(1800);
+wings.set_value(true);
+//Regular Side Right Matchloader
+scraper.set_value(true);
+chassis.turnToPoint(-14.5, -44.75-2-.5+2+3,650+200,{},false);
+chassis.moveToPoint(-14.5,-44.75-2-.5+2+3,1600,{.maxSpeed=80},false);
+//Regular Right Side Long Goal
+chassis.turnToPoint(10+6,-44.75-2-.5-1-2+3,800,{.forwards=false},false);
+chassis.moveToPoint(10+6,-44.75-2-.5-1-2+3, 2000., {.forwards=false}, false);
+wings.set_value(false);
+scraper.set_value(true);
+pros::delay(1800);
+wings.set_value(true);
+//Parking Zone
+scraper.set_value(false);
+chassis.moveToPoint(-25,-15,2000,{},false);
+chassis.turnToHeading(0,1000,{},false);
+float fDDistance = frontDistance.get()/25.4;
+chassis.setPose(chassis.getPose().x,-fDDistance,chassis.getPose().theta);
+chassis.moveToPose(-25,-1650/25.4,0,3500,{},true);
+pros::delay(500);
+for(int i = 0; i < 30; i++){
+  
+  float fDDistance = frontDistance.get()/25.4;
+  if(fDDistance<1800 && fDDistance > 1000){
+  chassis.setPose(chassis.getPose().x,-fDDistance,chassis.getPose().theta);
+  }
+  pros::delay(100);
+}
+}
+
+
+ 
 
  void autonomous() {
    autonomousRunning = true;
@@ -612,6 +877,9 @@ wings.set_value(true);
       break;
     case 6:
       autonSkills();
+      break;
+    case 7:
+      Skills96();
       break;
      }
      
@@ -653,15 +921,15 @@ wings.set_value(true);
     if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
       R1 = false;
       redirect.set_value(true);
-      
+      /*
       //match:
       firstStageMotor.move(127);
       secondStageMotor.move(-82);
-      /*
+      */
       //skills:
       firstStageMotor.move(127);
       secondStageMotor.move(-52);
-      */
+      
     }
 
     //L2 Hold
@@ -669,15 +937,15 @@ wings.set_value(true);
       R1 = false;
       L2 = true;
       intakeLift.set_value(true);
-      
+      /*
       //match
       firstStageMotor.move(-80);
       secondStageMotor.move(127);
-      /*
+      */
       //skills:
       firstStageMotor.move(-40);
       secondStageMotor.move(127);
-      */
+      
 
     }
 
