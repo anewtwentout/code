@@ -650,7 +650,7 @@ redirect.set_value(false);
 
 
  //Small movement into park zone
- chassis.moveToPoint(0,11,750,{.maxSpeed=65,.minSpeed=65, },false);
+ chassis.moveToPoint(0,11,750,{.maxSpeed=70,.minSpeed=70, },false);
  scraper.set_value(true);
  pros::delay(250);
  scraper.set_value(false);
@@ -663,7 +663,7 @@ scraper.set_value(true);
 pros::delay(750);
 scraper.set_value(false);
 pros::delay(500);
-chassis.moveToPoint(0, chassis.getPose().y-17, 1000,{.forwards=false,.maxSpeed=50},false);
+chassis.moveToPoint(0, chassis.getPose().y-17, 1000,{.forwards=false,.maxSpeed=40},false);
 chassis.moveToPoint(0, chassis.getPose().y+13, 600,{},false);
 // pros::delay(1000);
 //Reset Position
@@ -778,12 +778,12 @@ scraper.set_value(false);
 
 
 //Inbetween Other Left side
-chassis.turnToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2,800,{},false);
-chassis.moveToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2,1900,{},false);
+chassis.turnToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2-.5,800,{},false);
+chassis.moveToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2-.5,1900,{},false);
 //Left MatchLoader
 scraper.set_value(true);
-chassis.turnToPoint(112, -43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2+.5,800, {}, false);
-chassis.moveToPoint(112, -43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2+.5,2000,{.maxSpeed=65},false);
+chassis.turnToPoint(112, -43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2+.5-.5,800, {}, false);
+chassis.moveToPoint(112, -43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2+.5-.5,2000,{.maxSpeed=65},false);
 
 //Move Outside
 chassis.moveToPoint(100,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1,600,{.forwards=false},false);
@@ -805,8 +805,8 @@ scraper.set_value(true);
 pros::delay(800);
 //Regular Side Right Matchloader
 scraper.set_value(true);
-chassis.turnToPoint(-14.5, -44.75-2-.5+2,650+200,{},false);
-chassis.moveToPoint(-14.5,-44.75-2-.5+2,1800,{.maxSpeed=60},false);
+chassis.turnToPoint(-14.5, -44.75-2-.5+2-.25,650+200,{},false);
+chassis.moveToPoint(-14.5,-44.75-2-.5+2-.25,2000,{.maxSpeed=60},false);
 wings.set_value(true);
 //Regular Right Side Long Goal
 chassis.turnToPoint(12+10,-44.75-2-.5-1-2+3-.5-1.5+1.5-.1-.75,600,{.forwards=false},false);
@@ -818,8 +818,8 @@ chassis.turnToPoint(-2.5, -44.75-2-.5+2-.5,450,{},false);
 chassis.moveToPoint(-2.5,-44.75-2-.5+2-.5,800,{},false);
 chassis.turnToPoint(-16.5, -20,550,{},false);
 chassis.moveToPoint(-16.5,-20,1000,{.maxSpeed=60},false);
-chassis.turnToPoint(-16.5, -3,600,{},false);
-chassis.moveToPoint(-16.5, -3,900,{.maxSpeed=70,.minSpeed=70},false);
+chassis.turnToPoint(-16.5, -6,600,{},false);
+chassis.moveToPoint(-16.5, -6,900,{.maxSpeed=80,.minSpeed=80},false);
 
 // //Parking Zone
 // scraper.set_value(false);
