@@ -462,18 +462,37 @@ void rightSeven()
 
 
 //setup
-chassis.setPose(0,0,0); //X and Y might be changed btw,
+chassis.setPose(0,0,270); //X and Y might be changed btw,
 wings.set_value(true);
 redirect.set_value(false);
 firstStageMotor.move(127);
 secondStageMotor.move(-127);
-//first cluster
-chassis.turnToPoint(6,20,300,{},false);
-chassis.moveToPoint(6,20,900,{},false);
-scraper.set_value(true);
-chassis.turnToPoint(22,1,300,{},false);
-chassis.moveToPoint(22,1,700,{},false);
 
+//First Cluster
+chassis.moveToPoint(-23.644,9.01,600,{.minSpeed=80,.earlyExitRange=2},false);
+scraper.set_value(true);
+//Inbetween
+chassis.turnToPoint(0,34.75,500,{.forwards=false,.minSpeed=45,.earlyExitRange=5},false);
+chassis.moveToPoint(0,34.75,1000,{.forwards=false},false);
+//Matchloader
+chassis.turnToPoint(17.969,34.75,850,{},false);
+chassis.moveToPoint(17.969,34.75,1000,{},false);
+//Long Goal
+chassis.turnToPoint(-20.871,36,250,{.forwards = false}, false);
+chassis.moveToPoint(-15,36,700,{.forwards=false,.minSpeed=127,.earlyExitRange=3});
+chassis.moveToPoint(-20.871,36, 500+850, {.forwards = false}, true);
+pros::delay(500);
+wings.set_value(false);
+scraper.set_value(false);
+pros::delay(850);
+//MoveBack
+chassis.moveToPoint(-10,36,400,{.minSpeed=127,.earlyExitRange=1},false);
+//wing with attempt at motion chaining
+wings.set_value(false);
+chassis.turnToPoint(-14,45,1000,{.forwards=false,.minSpeed=80,.earlyExitRange=10},false);
+chassis.moveToPoint(-14,45,1000,{.forwards=false,.minSpeed=25,.earlyExitRange=1},false);
+chassis.turnToPoint(-45,45,1000,{.forwards=false},false);
+chassis.moveToPoint(-45,45,1000,{.forwards=false},false);
 }
 
 void autonSkills()
@@ -650,7 +669,7 @@ redirect.set_value(false);
 
 
  //Small movement into park zone
- chassis.moveToPoint(0,11,750,{.maxSpeed=70,.minSpeed=70, },false);
+ chassis.moveToPoint(0,9,750,{.maxSpeed=70,.minSpeed=70, },false);
  scraper.set_value(true);
  pros::delay(250);
  scraper.set_value(false);
@@ -671,7 +690,7 @@ chassis.turnToHeading(90,500,{},false);
 // chassis.moveToPoint(chassis.getPose().x+1, chassis.getPose().y, 300, {}, false);
 chassis.moveToPose(chassis.getPose().x-15, chassis.getPose().y, 90,800, {.forwards=false}, false);
 scraper.set_value(false);
-
+imu.set_roll(0);
 float lD = leftDistance.get()/25.4;
 pros::lcd::print(6,"Distance:%d", lD);
 //1267/25.4 should corrospend with 0
@@ -778,12 +797,12 @@ scraper.set_value(false);
 
 
 //Inbetween Other Left side
-chassis.turnToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2-.5,800,{},false);
-chassis.moveToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2-.5,1900,{},false);
+chassis.turnToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2-.75,800,{},false);
+chassis.moveToPoint(90,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2-.75,1900,{},false);
 //Left MatchLoader
 scraper.set_value(true);
-chassis.turnToPoint(112, -43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2+.5-.5,800, {}, false);
-chassis.moveToPoint(112, -43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2+.5-.5,2000,{.maxSpeed=65},false);
+chassis.turnToPoint(112, -43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2-.75,800, {}, false);
+chassis.moveToPoint(112, -43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1+.25+.2+.2-.75,2000,{.maxSpeed=65},false);
 
 //Move Outside
 chassis.moveToPoint(100,-43.25-2.5-0-6.5+2+0.125+.5-.25-.2+1+.5+1,600,{.forwards=false},false);
@@ -814,12 +833,13 @@ chassis.moveToPoint(12+10,-44.75-2-.5-1-2+3-.5-1.5+1.5-.1-.75, 1000, {.forwards=
 wings.set_value(false);
 scraper.set_value(false);
 pros::delay(1800);
+//Parking Zone
 chassis.turnToPoint(-2.5, -44.75-2-.5+2-.5,450,{},false);
 chassis.moveToPoint(-2.5,-44.75-2-.5+2-.5,800,{},false);
-chassis.turnToPoint(-16.5, -20,550,{},false);
-chassis.moveToPoint(-16.5,-20,1000,{.maxSpeed=60},false);
-chassis.turnToPoint(-16.5, -6,600,{},false);
-chassis.moveToPoint(-16.5, -6,900,{.maxSpeed=80,.minSpeed=80},false);
+chassis.turnToPoint(-18.5, -24,550,{},false);
+chassis.moveToPoint(-18.5,-24,1000,{.maxSpeed=60},false);
+chassis.turnToPoint(-18.5, -6,600,{},false);
+chassis.moveToPoint(-18.5, -6,900,{.maxSpeed=80,.minSpeed=80},false);
 
 // //Parking Zone
 // scraper.set_value(false);
