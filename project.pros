@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "left 7",
+    "project_name": "right4+3",
     "target": "v5",
     "templates": {
       "LemLib": {
