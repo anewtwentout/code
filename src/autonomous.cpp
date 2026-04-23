@@ -2,7 +2,7 @@
 #include "auto.hpp"
 #include "lemlib/api.hpp"
 enum autonomousEnums {SAWPAUTO = 0, rightControlRushAUTO = 1, leftControlRushAUTO = 2, rightFourPlusThreeAUTO = 3, leftThreePlusFourAUTO = 4, rightSevenAUTO = 5, leftSevenAUTO = 6};
-int autonomousValue = rightFourPlusThreeAUTO;
+int autonomousValue = SAWPAUTO;
 void autonomous() {
    switch(autonomousValue){
     case SAWPAUTO:
